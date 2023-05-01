@@ -75,4 +75,13 @@ public with sharing class CaseConfigController {
         caseObj.Status = 'Closed';
         update caseObj;
     }
+
+    @AuraEnabled
+    public static boolean getCaseStatusValue(String recordId){
+        try {
+           return [SELECT Id,Status FROM Case WHERE Id = :recordId].Status != 'Closed' ? true : false;
+        } catch (Exception e) {
+            throw throwException(e.getMessage());
+        }
+    }
 }

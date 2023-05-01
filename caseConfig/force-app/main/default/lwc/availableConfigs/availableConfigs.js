@@ -1,8 +1,9 @@
 import { LightningElement , wire , track , api} from 'lwc';
 import getConfigData from '@salesforce/apex/CaseConfigController.getConfigData';
 import addConfigData from '@salesforce/apex/CaseConfigController.addConfigData';
+import getCaseStatusValue from '@salesforce/apex/CaseConfigController.getCaseStatusValue';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { publish, MessageContext } from 'lightning/messageService';
+import { publish, subscribe , MessageContext } from 'lightning/messageService';
 import REFRESH_CASE from '@salesforce/messageChannel/Refresh_Case__c';
 
 const columns = [
@@ -23,18 +24,30 @@ export default class AvailableConfigs extends LightningElement {
     @track sortBy;
     @track sortDir;
     @track disableButton = true;
-
+    caseNotClosed = true;
 
     @wire(getConfigData , {recordId : '$recordId'})
     getConfigData({data,error}){
         if (data) {
             this.configData = data;
+            this.handleGetCaseStatusValue();
         } else if (error) {
             this.handleToastMessage(errorTitle, error , errorVariant);
         }
     }
 
+    handleGetCaseStatusValue(){
+        getCaseStatusValue({recordId : this.recordId})
+        .then(result =>{
+            this.caseNotClosed = result;
+        })
+        .catch(error =>{
+            this.handleToastMessage(errorTitle, error , errorVariant);
+        })
+    }
+
     connectedCallback() {
+        this.subscribeToMessageChannel();
     }
 
     doSort(event) {
@@ -63,7 +76,7 @@ export default class AvailableConfigs extends LightningElement {
 
     rowSelectionAction(event){
         const selectedRows = event.detail.selectedRows;
-        if(selectedRows.length > 0){
+        if(selectedRows.length > 0 && this.caseNotClosed){
             this.disableButton = false;
         }else{
             this.disableButton = true;
@@ -114,5 +127,18 @@ export default class AvailableConfigs extends LightningElement {
             variant: variant
         });
         this.dispatchEvent(evt);
+    }
+
+    subscribeToMessageChannel() {
+        this.subscription = subscribe(
+          this.messageContext,
+          REFRESH_CASE,
+          caseData => this.handleRefreshCaseEvent(caseData)
+        );
+    }
+
+    handleRefreshCaseEvent(caseEventData){
+        if(caseEventData.recordId === this.recordId && caseEventData.action === 'disable')
+            this.caseNotClosed = false;
     }
 }

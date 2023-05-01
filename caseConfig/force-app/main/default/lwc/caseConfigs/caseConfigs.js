@@ -1,7 +1,7 @@
 import { LightningElement , api , track , wire } from 'lwc';
 import getCaseConfigData from '@salesforce/apex/CaseConfigController.getCaseConfigData';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { subscribe, MessageContext } from 'lightning/messageService';
+import { publish, subscribe, MessageContext } from 'lightning/messageService';
 import REFRESH_CASE from '@salesforce/messageChannel/Refresh_Case__c';
 import actionOnConfigData from '@salesforce/apex/CaseConfigController.actionOnConfigData';
 
@@ -32,7 +32,6 @@ export default class CaseConfigs extends LightningElement {
         .then(result =>{
             if(result){
                 this.caseConfigData = result;
-                console.log('result:::',result);
                 if(result.length > 0 && result[0].Case__r.Status !== 'Closed'){
                     this.disableButton = false;
                 }else{
@@ -48,6 +47,7 @@ export default class CaseConfigs extends LightningElement {
     handleClickSend(event){
         this.handleActionOnConfigData();
         this.disableButton = true;
+        this.setDisableAddButton();
     }
 
     handleToastMessage(title, message, variant){
@@ -81,8 +81,15 @@ export default class CaseConfigs extends LightningElement {
             this.handleToastMessage(successTitle, 'Records Submitted Successfully' , successVariant);
         })
         .catch(error =>{
-            console.log('error',JSON.stringify(error));
             this.handleToastMessage(errorTitle, error.body.message , errorVariant);
         })
+    }
+
+    setDisableAddButton(){
+        const caseData = {
+            recordId: this.recordId,
+            action: 'disable'
+        }
+        publish(this.messageContext, REFRESH_CASE, caseData);
     }
 }

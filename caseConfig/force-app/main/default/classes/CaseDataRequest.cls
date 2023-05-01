@@ -2,7 +2,6 @@ public with sharing class CaseDataRequest {
     public CaseDataRequest(String caseRecId){
         Case caseData = [SELECT Id, Status, (SELECT Id, Label__c, Type__c, Amount__c FROM Case_Configs__r) FROM Case WHERE Id = :caseRecId LIMIT 1];
         if(caseData != null){
-            System.debug(JSON.serialize(caseData));
             caseId = caseData.Id;
             status = 'Closed';
             CaseConfigRequest caseConfigRequestObj;
