@@ -1,0 +1,19 @@
+<template>
+    <div class="slds-card slds-card_boundary">
+        <lightning-card>
+            <h3 slot="title">
+                <lightning-icon icon-name="utility:price_book_entries" size="small"></lightning-icon>
+                Case Configs
+            </h3>
+            <lightning-button label="Send" variant="brand" onclick={handleClickSend} slot="actions" disabled={disableButton}></lightning-button>
+            <p class="slds-border_top" style="height: 300px;">
+                <lightning-datatable
+                    key-field="Id"
+                    data={caseConfigData}
+                    columns={columns}
+                    hide-checkbox-column>
+                </lightning-datatable>
+            </p>
+        </lightning-card>
+    </div>
+</template>

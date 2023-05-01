@@ -2,10 +2,8 @@ import { LightningElement , wire , track , api} from 'lwc';
 import getConfigData from '@salesforce/apex/CaseConfigController.getConfigData';
 import addConfigData from '@salesforce/apex/CaseConfigController.addConfigData';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-
-const actions = [
-    { label: 'ADD', name: 'add' }
-];
+import { publish, MessageContext } from 'lightning/messageService';
+import REFRESH_CASE from '@salesforce/messageChannel/Refresh_Case__c';
 
 const columns = [
     { label: 'Label', fieldName: 'Label__c', sortable: true },
@@ -20,7 +18,7 @@ const successTitle = 'SUCCESS';
 
 export default class AvailableConfigs extends LightningElement {
     @api recordId;
-    @track caseConfigData = [];
+    @track configData = [];
     columns = columns;
     @track sortBy;
     @track sortDir;
@@ -30,8 +28,7 @@ export default class AvailableConfigs extends LightningElement {
     @wire(getConfigData , {recordId : '$recordId'})
     getConfigData({data,error}){
         if (data) {
-            console.log(data); 
-            this.caseConfigData = data;
+            this.configData = data;
         } else if (error) {
             this.handleToastMessage(errorTitle, error , errorVariant);
         }
@@ -47,7 +44,7 @@ export default class AvailableConfigs extends LightningElement {
     }
 
     sortData(fieldname, direction) {
-        let parseDataCloned = JSON.parse(JSON.stringify(this.caseConfigData));
+        let parseDataCloned = JSON.parse(JSON.stringify(this.configData));
         // Return the value stored in the field
         let keyValue = (a) => {
             return a[fieldname];
@@ -61,7 +58,7 @@ export default class AvailableConfigs extends LightningElement {
             // sorting values based on direction
             return isReverse * ((x > y) - (y > x));
         });
-        this.caseConfigData = parseDataCloned;
+        this.configData = parseDataCloned;
     }
 
     rowSelectionAction(event){
@@ -83,12 +80,12 @@ export default class AvailableConfigs extends LightningElement {
         .then(result =>{
             if(result){
                 this.handleToastMessage(successTitle, 'Records Inserted Successfully' , successVariant);
-                let clonedCaseConfigData = this.caseConfigData;
-                this.caseConfigData = this.removeElements(clonedCaseConfigData, selectedRecords);
+                let clonedConfigData = this.configData;
+                this.configData = this.removeElements(clonedConfigData, selectedRecords);
+                this.refreshCaseRecord();
             }
         })
         .catch(error =>{
-            console.log(error);
             this.handleToastMessage(errorTitle, error , errorVariant);
         })
     }
@@ -99,8 +96,17 @@ export default class AvailableConfigs extends LightningElement {
         });
     }
 
+    @wire(MessageContext)
+    messageContext;
+
+    refreshCaseRecord(){
+        const caseData = {
+            recordId: this.recordId
+        }
+        publish(this.messageContext, REFRESH_CASE, caseData);
+    }
+
     handleToastMessage(title, message, variant){
-        alert(variant);
         const evt = new ShowToastEvent({
             title: title,
             message: message,

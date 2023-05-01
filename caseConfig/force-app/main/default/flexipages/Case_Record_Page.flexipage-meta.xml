@@ -51,6 +51,12 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
+                <componentName>caseConfigs</componentName>
+                <identifier>c_caseConfigs</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>actionNames</name>
                 </componentInstanceProperties>

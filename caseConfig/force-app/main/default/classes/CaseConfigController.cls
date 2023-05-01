@@ -18,6 +18,15 @@ public with sharing class CaseConfigController {
     }
 
     @AuraEnabled
+    public static List<Case_Config__c> getCaseConfigData(String recordId){
+        try {
+            return [SELECT Id, Label__c, Type__c, Amount__c FROM Case_Config__c WHERE Case__c = :recordId LIMIT 50000];
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+    @AuraEnabled
     public static List<Case_Config__c> addConfigData(String recordId, List<Config__c> newConfigRecs){
         try {
             List<Case_Config__c> newCaseConfigRecs = new List<Case_Config__c>();
@@ -35,7 +44,6 @@ public with sharing class CaseConfigController {
             }
             return newCaseConfigRecs;
         } catch (Exception e) {
-            System.debug(e.getMessage());
             throw new AuraHandledException(e.getMessage());
         }
     }
