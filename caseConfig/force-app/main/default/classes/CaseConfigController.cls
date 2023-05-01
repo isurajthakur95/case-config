@@ -47,4 +47,26 @@ public with sharing class CaseConfigController {
             throw new AuraHandledException(e.getMessage());
         }
     }
+
+    @AuraEnabled
+    public static void actionOnConfigData(String recordId){
+        try {
+            CaseConfigWebServiceCallout calloutObject = new CaseConfigWebServiceCallout();
+            Integer responseCode = calloutObject.sendRequest(recordId);
+            if(responseCode != 200){
+                throw new AuraHandledException('Callout Failed');
+            }else{
+                setCaseToClosed(recordId);
+            }
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+    static void setCaseToClosed(String recordId){
+        Case caseObj = new Case();
+        caseObj.Id = recordId;
+        caseObj.Status = 'Closed';
+        update caseObj;
+    }
 }

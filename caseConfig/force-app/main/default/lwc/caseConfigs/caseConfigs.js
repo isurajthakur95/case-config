@@ -3,6 +3,7 @@ import getCaseConfigData from '@salesforce/apex/CaseConfigController.getCaseConf
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { subscribe, MessageContext } from 'lightning/messageService';
 import REFRESH_CASE from '@salesforce/messageChannel/Refresh_Case__c';
+import actionOnConfigData from '@salesforce/apex/CaseConfigController.actionOnConfigData';
 
 const columns = [
     { label: 'Label', fieldName: 'Label__c' },
@@ -45,6 +46,7 @@ export default class CaseConfigs extends LightningElement {
     }
 
     handleClickSend(event){
+        this.handleActionOnConfigData();
         this.disableButton = true;
     }
 
@@ -71,5 +73,15 @@ export default class CaseConfigs extends LightningElement {
     handleRefreshCaseEvent(caseEventData){
         if(caseEventData.recordId === this.recordId && caseEventData.action === 'reload')
             this.handleGetCaseConfigData(caseData.recordId);
+    }
+
+    handleActionOnConfigData(){
+        actionOnConfigData({recordId : this.recordId})
+        .then(result =>{
+            this.handleToastMessage(successTitle, 'Records Submitted Successfully' , successVariant);
+        })
+        .catch(error =>{
+            this.handleToastMessage(errorTitle, error , errorVariant);
+        })
     }
 }
