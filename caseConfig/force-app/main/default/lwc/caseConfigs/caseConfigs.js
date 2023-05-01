@@ -81,7 +81,8 @@ export default class CaseConfigs extends LightningElement {
             this.handleToastMessage(successTitle, 'Records Submitted Successfully' , successVariant);
         })
         .catch(error =>{
-            this.handleToastMessage(errorTitle, error , errorVariant);
+            console.log('error',JSON.stringify(error));
+            this.handleToastMessage(errorTitle, error.body.message , errorVariant);
         })
     }
 }

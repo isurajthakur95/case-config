@@ -13,7 +13,7 @@ public with sharing class CaseConfigController {
                 WHERE Label__c NOT IN :caseConfigLabels
                 LIMIT 50000];
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            throw throwException(e.getMessage());
         }
     }
 
@@ -22,7 +22,7 @@ public with sharing class CaseConfigController {
         try {
             return [SELECT Id, Label__c, Type__c, Amount__c, Case__r.Status FROM Case_Config__c WHERE Case__c = :recordId LIMIT 50000];
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            throw throwException(e.getMessage());
         }
     }
 
@@ -44,7 +44,7 @@ public with sharing class CaseConfigController {
             }
             return newCaseConfigRecs;
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            throw throwException(e.getMessage());
         }
     }
 
@@ -54,13 +54,19 @@ public with sharing class CaseConfigController {
             CaseConfigWebServiceCallout calloutObject = new CaseConfigWebServiceCallout();
             Integer responseCode = calloutObject.sendRequest(recordId);
             if(responseCode != 200){
-                throw new AuraHandledException('Callout Failed');
+                throwException('Callout Failed');
             }else{
                 setCaseToClosed(recordId);
             }
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            throw throwException(e.getMessage());
         }
+    }
+
+    static AuraHandledException throwException(String message){
+        AuraHandledException obj = new AuraHandledException('Failed');
+        obj.setMessage(message);
+        return obj;
     }
 
     static void setCaseToClosed(String recordId){
