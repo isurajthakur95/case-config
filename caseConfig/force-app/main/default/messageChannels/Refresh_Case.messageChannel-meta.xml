@@ -6,5 +6,9 @@
         <description>This is the Case Record Id for refresh</description>
         <fieldName>recordId</fieldName>
     </lightningMessageFields>
+    <lightningMessageFields>
+        <description>This is the action for the mentioned case Like refresh or disable</description>
+        <fieldName>action</fieldName>
+    </lightningMessageFields>
     <masterLabel>RefreshCase</masterLabel>
 </LightningMessageChannel>

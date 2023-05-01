@@ -101,7 +101,8 @@ export default class AvailableConfigs extends LightningElement {
 
     refreshCaseRecord(){
         const caseData = {
-            recordId: this.recordId
+            recordId: this.recordId,
+            action: 'reload'
         }
         publish(this.messageContext, REFRESH_CASE, caseData);
     }

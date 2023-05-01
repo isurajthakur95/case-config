@@ -31,6 +31,12 @@ export default class CaseConfigs extends LightningElement {
         .then(result =>{
             if(result){
                 this.caseConfigData = result;
+                console.log('result:::',result);
+                if(result.length > 0 && result[0].Case__r.Status !== 'Closed'){
+                    this.disableButton = false;
+                }else{
+                    this.disableButton = true;
+                }
             }
         })
         .catch(error =>{
@@ -39,6 +45,7 @@ export default class CaseConfigs extends LightningElement {
     }
 
     handleClickSend(event){
+        this.disableButton = true;
     }
 
     handleToastMessage(title, message, variant){
@@ -57,7 +64,12 @@ export default class CaseConfigs extends LightningElement {
         this.subscription = subscribe(
           this.messageContext,
           REFRESH_CASE,
-          caseData => this.handleGetCaseConfigData(caseData.recordId)
+          caseData => this.handleRefreshCaseEvent(caseData)
         );
+    }
+
+    handleRefreshCaseEvent(caseEventData){
+        if(caseEventData.recordId === this.recordId && caseEventData.action === 'reload')
+            this.handleGetCaseConfigData(caseData.recordId);
     }
 }
