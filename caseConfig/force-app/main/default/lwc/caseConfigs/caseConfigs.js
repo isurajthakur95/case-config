@@ -5,12 +5,6 @@ import { publish, subscribe, MessageContext } from 'lightning/messageService';
 import REFRESH_CASE from '@salesforce/messageChannel/Refresh_Case__c';
 import actionOnConfigData from '@salesforce/apex/CaseConfigController.actionOnConfigData';
 
-const columns = [
-    { label: 'Label', fieldName: 'Label__c' },
-    { label: 'Type', fieldName: 'Type__c' },
-    { label: 'Amount', fieldName: 'Amount__c' }
-];
-
 // Define constants for toast messages
 const TOAST_ERROR_VARIANT = 'error';
 const TOAST_ERROR_TITLE = 'ERROR';
@@ -26,7 +20,11 @@ export default class CaseConfigs extends LightningElement {
     @api recordId;
 
     /** The columns to display in the case configuration table. */
-    columns = columns;
+    columns = [
+        { label: 'Label', fieldName: 'Label__c' },
+        { label: 'Type', fieldName: 'Type__c' },
+        { label: 'Amount', fieldName: 'Amount__c' }
+    ];
 
     /** The case configuration data to display in the table. */
     @track caseConfigData = [];

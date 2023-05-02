@@ -4,7 +4,7 @@ public with sharing class CaseDataRequest {
         Case caseData = [SELECT Id, Status, (SELECT Id, Label__c, Type__c, Amount__c FROM Case_Configs__r) FROM Case WHERE Id = :caseRecId LIMIT 1];
         if(caseData != null){
             caseId = caseData.Id;
-            status = 'Closed';
+            status = ConstantUtility.CLOSED;
             CaseConfigRequest caseConfigRequestObj;
             for(Case_Config__c rec : caseData.Case_Configs__r){
                 caseConfigRequestObj = new CaseConfigRequest();

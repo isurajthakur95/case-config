@@ -6,12 +6,6 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { publish, subscribe, MessageContext } from 'lightning/messageService';
 import REFRESH_CASE from '@salesforce/messageChannel/Refresh_Case__c';
 
-const columns = [
-    { label: 'Label', fieldName: 'Label__c' },
-    { label: 'Type', fieldName: 'Type__c' },
-    { label: 'Amount', fieldName: 'Amount__c' }
-];
-
 /**
  * Constants for toast message variants and titles
  */

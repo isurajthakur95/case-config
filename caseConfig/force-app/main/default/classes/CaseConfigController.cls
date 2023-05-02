@@ -19,7 +19,7 @@ public with sharing class CaseConfigController {
                 LIMIT 50000];
         } catch (Exception e) {
             // Log the error message or return a specific error message for the user.
-            throw throwException('An error occurred while retrieving Config data.');
+            throw throwException(ConstantUtility.CONFIG_DATA_RET_ERR);
         }
     }
     
@@ -34,7 +34,7 @@ public with sharing class CaseConfigController {
             return [SELECT Id, Label__c, Type__c, Amount__c, Case__r.Status FROM Case_Config__c WHERE Case__c = :recordId LIMIT 50000];
         } catch (Exception e) {
             // Log the error message or return a specific error message for the user.
-            throw throwException('An error occurred while retrieving Case Config data.');
+            throw throwException(ConstantUtility.CASECONFIG_DATA_RET_ERR);
         }
     }
     
@@ -64,7 +64,7 @@ public with sharing class CaseConfigController {
             }
             return newCaseConfigRecs;
         } catch (Exception e) {
-            throw throwException('Failed to add new Case_Config records. Error: ' + e.getMessage());
+            throw throwException(ConstantUtility.CASECONFIG_DATA_ADD_ERR + e.getMessage());
         }
     }
     
@@ -80,12 +80,12 @@ public with sharing class CaseConfigController {
             CaseConfigWebServiceCallout calloutObject = new CaseConfigWebServiceCallout();
             Integer responseCode = calloutObject.sendRequest(recordId);
             if(responseCode != 200){
-                throw new AuraHandledException('Callout Failed. Response code: ' + responseCode);
+                throw new AuraHandledException(ConstantUtility.CALLOUT_FAILED_ERR + responseCode);
             }else{
                 setCaseToClosed(recordId);
             }
         } catch (Exception e) {
-            throw throwException('Failed to perform action on Case_Config records. Error: ' + e.getMessage());
+            throw throwException(ConstantUtility.CASECONFIG_DATA_SEND_ERR + e.getMessage());
         }
     }
     
@@ -96,7 +96,7 @@ public with sharing class CaseConfigController {
 * @return  The AuraHandledException object.
 */
     static AuraHandledException throwException(String message){
-        AuraHandledException obj = new AuraHandledException('Failed');
+        AuraHandledException obj = new AuraHandledException(ConstantUtility.FAILED);
         obj.setMessage(message);
         return obj;
     }
@@ -108,7 +108,7 @@ public with sharing class CaseConfigController {
     static void setCaseToClosed(String recordId){
         Case caseObj = new Case();
         caseObj.Id = recordId;
-        caseObj.Status = 'Closed';
+        caseObj.Status = ConstantUtility.CLOSED;
         update caseObj;
     }
     
@@ -121,7 +121,7 @@ public with sharing class CaseConfigController {
     public static boolean getCaseStatusValue(String recordId){
         try {
             Case caseObj = [SELECT Id,Status FROM Case WHERE Id = :recordId];
-            return caseObj.Status != 'Closed';
+            return caseObj.Status != ConstantUtility.CLOSED;
         } catch (Exception e) {
             throw throwException(e.getMessage());
         }
