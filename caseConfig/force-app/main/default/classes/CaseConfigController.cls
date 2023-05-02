@@ -1,5 +1,10 @@
 public with sharing class CaseConfigController {
-
+    
+    /*
+* Returns a list of Config__c records that are not associated with the Case__c provided.
+* @param recordId: Id of the Case__c record to check against.
+* @return List of Config__c records.
+*/
     @AuraEnabled(cacheable=true)
     public static List<Config__c> getConfigData(String recordId){
         try {
@@ -13,19 +18,34 @@ public with sharing class CaseConfigController {
                 WHERE Label__c NOT IN :caseConfigLabels
                 LIMIT 50000];
         } catch (Exception e) {
-            throw throwException(e.getMessage());
+            // Log the error message or return a specific error message for the user.
+            throw throwException('An error occurred while retrieving Config data.');
         }
     }
-
+    
+    /*
+* Returns a list of Case_Config__c records associated with the Case__c provided.
+* @param recordId: Id of the Case__c record to retrieve records for.
+* @return List of Case_Config__c records.
+*/
     @AuraEnabled
     public static List<Case_Config__c> getCaseConfigData(String recordId){
         try {
             return [SELECT Id, Label__c, Type__c, Amount__c, Case__r.Status FROM Case_Config__c WHERE Case__c = :recordId LIMIT 50000];
         } catch (Exception e) {
-            throw throwException(e.getMessage());
+            // Log the error message or return a specific error message for the user.
+            throw throwException('An error occurred while retrieving Case Config data.');
         }
     }
-
+    
+    /**
+* Adds new Case_Config records to a Case record.
+* 
+* @param recordId  The Id of the Case record to add the new records to.
+* @param newConfigRecs  A list of Config__c records to be added as new Case_Config records.
+* @return  A list of Case_Config records that were added to the Case.
+* @throws AuraHandledException if there is any exception during the execution.
+*/
     @AuraEnabled
     public static List<Case_Config__c> addConfigData(String recordId, List<Config__c> newConfigRecs){
         try {
@@ -44,42 +64,64 @@ public with sharing class CaseConfigController {
             }
             return newCaseConfigRecs;
         } catch (Exception e) {
-            throw throwException(e.getMessage());
+            throw throwException('Failed to add new Case_Config records. Error: ' + e.getMessage());
         }
     }
-
+    
+    /**
+* Performs an action on the Case_Config records associated with a Case record.
+* 
+* @param recordId  The Id of the Case record to perform the action on.
+* @throws AuraHandledException if there is any exception during the execution.
+*/
     @AuraEnabled
     public static void actionOnConfigData(String recordId){
         try {
             CaseConfigWebServiceCallout calloutObject = new CaseConfigWebServiceCallout();
             Integer responseCode = calloutObject.sendRequest(recordId);
             if(responseCode != 200){
-                throwException('Callout Failed');
+                throw new AuraHandledException('Callout Failed. Response code: ' + responseCode);
             }else{
                 setCaseToClosed(recordId);
             }
         } catch (Exception e) {
-            throw throwException(e.getMessage());
+            throw throwException('Failed to perform action on Case_Config records. Error: ' + e.getMessage());
         }
     }
-
+    
+    /**
+* Throws a custom AuraHandledException with the given message.
+* 
+* @param message  The message to be included in the exception.
+* @return  The AuraHandledException object.
+*/
     static AuraHandledException throwException(String message){
         AuraHandledException obj = new AuraHandledException('Failed');
         obj.setMessage(message);
         return obj;
     }
-
+    
+    /**
+* Sets the Case record to Closed.
+* @param recordId The Id of the Case record.
+**/
     static void setCaseToClosed(String recordId){
         Case caseObj = new Case();
         caseObj.Id = recordId;
         caseObj.Status = 'Closed';
         update caseObj;
     }
-
+    
+    /**
+* Returns the status of the Case record.
+* @param recordId The Id of the Case record.
+* @return The status of the Case record.
+**/
     @AuraEnabled
     public static boolean getCaseStatusValue(String recordId){
         try {
-           return [SELECT Id,Status FROM Case WHERE Id = :recordId].Status != 'Closed' ? true : false;
+            Case caseObj = [SELECT Id,Status FROM Case WHERE Id = :recordId];
+            return caseObj.Status != 'Closed';
         } catch (Exception e) {
             throw throwException(e.getMessage());
         }
