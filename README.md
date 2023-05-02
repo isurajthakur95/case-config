@@ -31,5 +31,5 @@ The use case requires a test coverage of at least 85% for APEX, with Apex used f
                 "type": "Test Type",
                 "amount": 10.00 }]
         }
-    b. After successful response, disable adding new Config records and sending the request a second time. And also update case to closed.
+    c. After successful response, disable adding new Config records and sending the request a second time. And also update case to closed.
 6. Write test classes to achieve at least 85% test coverage for the Apex classes created above.
