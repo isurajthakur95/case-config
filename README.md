@@ -9,22 +9,22 @@ Overall, the use case aims to enable users to add Config records to a Case witho
 
 ## Task Breakdown for the Use Case
 1. Creation of two new objects in Salesforce:
-    a. Config__c object with fields: Label (Text, Unique), Type (Text), and Amount (Number).
-    b. Case_Config__c object with fields: Label (Text, Unique), Type (Text), Amount (Number), and Case (Lookup to Case object).
+    1. Config__c object with fields: Label (Text, Unique), Type (Text), and Amount (Number).
+    2. Case_Config__c object with fields: Label (Text, Unique), Type (Text), Amount (Number), and Case (Lookup to Case object).
 2. 'Available Config' component on the Case detail page:
-    a. Create a lighting web component named 'Available Config'.
-    b. Create a Controller class that retrieves all Config records from the database which are not there on current case record.
-    c. Use base lightning component to show data with columns, Label, Type, and Amount.
-    d. Mutiselection of checkboxes should be allowed.
-    e. Implement a button 'Add' to add the selected Config records to the 'Case Configs' component and save them to the database.
-    f. Added selected config records should be shown without refresh in 'Case Configs'.
+    1. Create a lighting web component named 'Available Config'.
+    2. Create a Controller class that retrieves all Config records from the database which are not there on current case record.
+    3. Use base lightning component to show data with columns, Label, Type, and Amount.
+    4. Mutiselection of checkboxes should be allowed.
+    5. Implement a button 'Add' to add the selected Config records to the 'Case Configs' component and save them to the database.
+    6. Added selected config records should be shown without refresh in 'Case Configs'.
 3. 'Case Configs' component on the Case detail page:
-    a. Create a lighting web component named 'Case Configs'.
-    b. Create a Controller class that retrieves all Case Config records.
-    c. Use base lightning component to show data with columns, Label, Type, and Amount.
+    1. Create a lighting web component named 'Case Configs'.
+    2. Create a Controller class that retrieves all Case Config records.
+    3. Use base lightning component to show data with columns, Label, Type, and Amount.
 4. Implementation of "Send" button on the Case Configs component:
-    a. Create a button 'Send' on 'Case Configs' component.
-    b. When send button is clicked, do a callout to external system with below request format:
+    1. Create a button 'Send' on 'Case Configs' component.
+    2. When send button is clicked, do a callout to external system with below request format:
         {
             "caseId": "50068000005QOhbAAG",
             "status": "Closed",
@@ -33,5 +33,5 @@ Overall, the use case aims to enable users to add Config records to a Case witho
                 "type": "Test Type",
                 "amount": 10.00 }]
         }
-    c. After successful response, disable adding new Config records and sending the request a second time. And also update case to closed.
+    3. After successful response, disable adding new Config records and sending the request a second time. And also update case to closed.
 6. Write test classes to achieve at least 85% test coverage for the Apex classes created above.
