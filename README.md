@@ -35,3 +35,11 @@ Overall, the use case aims to enable users to add Config records to a Case witho
         }
     3. After successful response, disable adding new Config records and sending the request a second time. And also update case to closed.
 6. Write test classes to achieve at least 85% test coverage for the Apex classes created above.
+
+## Deployment Step
+1. git clone 'https://github.com/isurajthakur95/case-config.git'
+2. cd .\case-config\
+3. sfdx auth:web:login
+4. Login with your org credentials
+3. sfdx force:source:deploy -p force-app\main\default -u user_name
+4. sfdx force:org:open -u user_name
