@@ -109,7 +109,7 @@ public with sharing class CaseConfigController {
         Case caseObj = new Case();
         caseObj.Id = recordId;
         caseObj.Status = ConstantUtility.CLOSED;
-        Dataabase.update(caseObj);
+        Database.update(caseObj);
     }
     
     /**
