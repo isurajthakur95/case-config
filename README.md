@@ -1,9 +1,11 @@
 ## Use Case
 This use case requires the creation of two new objects, "Config__c" and "Case_Config__c". The first object has three fields, "Label" (Text, Unique), "Type" (Text), and "Amount" (Number), while the second object has the same fields along with a lookup to the Case object.
 
-The use case requires the creation of two custom related lists on the Case detail page. The "Available Configs" component displays all Config records in a 3-column list and allows the user to select multiple records, which are added to the Case Configs list by pressing the "Add" button. Config records cannot be added to the Case Configs list more than once. The "Case Configs" component displays added Config records in a 3-column list and has a "Send" button, which, when pressed, sets the status of the Case to "Closed" and sends a request to an external service using a POST request. The request is in JSON format and includes the Case ID, status, and caseConfigs (which are the Config records added to the Case).
+The use case requires the creation of two custom related lists on the Case detail page. The "Available Configs" component displays all Config records in a 3-column list and allows the user to select multiple records, which are added to the Case Configs list by pressing the "Add" button. The "Case Configs" component displays added Config records in a 3-column list and has a "Send" button, which, when pressed, sets the status of the Case to "Closed" and sends a request to an external service using a POST request. The request is in JSON format and includes the Case ID, status, and caseConfigs (which are the Config records added to the Case).
 
-The use case requires a test coverage of at least 85% for APEX, with Apex used for DML and SOQL queries. Overall, the use case aims to enable users to add Config records to a Case without leaving the Case detail page and to send a request to an external service with the added Config records when the Case is closed.
+We also need to write test classes for coverage of at least 85% for APEX.
+
+Overall, the use case aims to enable users to add Config records to a Case without leaving the Case detail page and to send a request to an external service with the added Config records when the Case is closed.
 
 ## Task Breakdown for the Use Case
 1. Creation of two new objects in Salesforce:
